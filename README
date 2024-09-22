@@ -6,4 +6,7 @@ Prerequisites:
 >>> python -m pip install fastapi==0.75.0 uvicorn==0.17.6
 >>> python -m pip install sqlalchemy==1.4.32
 >>> python -m pip install python-dotenv==0.19.2
->>> python -m pip install validators==0.18.2
+(>>> python -m pip install validators==0.18.2)
+
+Future updates:
+- Add dewey decimal system classification with validators
