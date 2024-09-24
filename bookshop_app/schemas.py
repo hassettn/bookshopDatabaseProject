@@ -16,8 +16,8 @@ class StockBase(BaseModel):
 
 
 class Stock(StockBase):
-    in_stock: bool
-    searches: int
+    # in_stock: bool
+    # searches: int
     class Config:
         orm_mode = True
 
@@ -29,10 +29,10 @@ class Stock(StockBase):
 
 class OrdersBase(BaseModel):
     title: str
-    author: int
+    author: str
 
 
 class Orders(OrdersBase):
-    quantity: int
+    # quantity: int
     class Config:
         orm_mode = True
