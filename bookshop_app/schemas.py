@@ -16,7 +16,8 @@ class StockBase(BaseModel):
 
 
 class Stock(StockBase):
-    # in_stock: bool
+    stock: int
+    in_stock: bool
     # searches: int
     class Config:
         orm_mode = True
@@ -33,6 +34,6 @@ class OrdersBase(BaseModel):
 
 
 class Orders(OrdersBase):
-    # quantity: int
+    quantity: int
     class Config:
         orm_mode = True

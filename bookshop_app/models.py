@@ -28,6 +28,7 @@ class Order(Base):
     author = Column(String, unique=False, index=True)
     quantity = Column(Integer, default=0)
     customer = Column(String, unique=False, index=True)
+    # complete = Column(Boolean, default=False)
 
 
 # TODO: add table for customers

@@ -12,12 +12,15 @@ python-dotenv==0.19.2
 
 Future updates:
 x Add endpoint to view orders and stock
-- Before placing an order check that the book exists in the stock table
+x Before placing an order check that the book exists in the stock table
+- Add stock update endpoint (title and author to be verified against stock table, only stock number updated)
 - Before placing an order check that the stock is greater than the order quantity
 - Combine book and stock base models
+- Add some proper error messaging
 - Add customer table
 - Add stock update endpoint (title and author to be verified against stock table, only stock number updated)
 - Add 'order completed' column and remove stock accordingly when updated
 - Add dewey decimal system classification with validators
 - Move create update delete actions to crud file
 - Avoid duplicate book listings
+- Add timestamps to orders

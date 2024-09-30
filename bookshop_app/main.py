@@ -15,12 +15,18 @@ shop_app = FastAPI()
 models.Base.metadata.create_all(bind=engine)
 
 
+#why do it this way and not with sessionmaker?
 def get_db():
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
+
+
+def random_key(len: int):
+    key = "".join(secrets.choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789") for _ in range(len))
+    return key
 
 # TODO: add testing for database functionality
 
@@ -32,34 +38,59 @@ def read_root():
 
 # TODO: add functionality to update stock numbers also
 # endpoint to add a book to the stock table
-@shop_app.post("/book", )  # add response_model for response
-def create_book(book: schemas.StockBase, db: Session = Depends(get_db)):
-    # not sure whether I need this key but let's keep it for now
-    key = "".join(secrets.choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ") for _ in range(5))
-    db_book = models.Stock(
-        title=book.title, author=book.author, key=key
-    )
-    db.add(db_book)
-    db.commit()
-    db.refresh(db_book)
-    return db_book
+@shop_app.post("/book")  # add response_model for response
+def create_book(book: schemas.Stock, db: Session = Depends(get_db)):
+    if crud.get_book_by_author_title(db=db, author=book.author, title=book.title,):
+        return "book already exists"
+    else:
+        key = random_key(5)
+        db_book = models.Stock(
+            title=book.title,
+            author=book.author,
+            key=key,
+            stock=book.stock,
+            in_stock=bool(book.stock),
+        )
+        db.add(db_book)
+        db.commit()
+        db.refresh(db_book)
+        return db_book
 
 
 # TODO: add functionality to remove stock from inventory according to orders
+# TODO: disallow zero quantity orders
 # TODO: refine what information requested and returned
-# TODO: unite tables in base model and refine function
 # endpoint to add an order to the orders table
-@shop_app.post("/order", )  # add response_model for response
-def create_order(order: schemas.OrdersBase, db: Session = Depends(get_db)):
-    # not sure that I need this key but let's keep it for now
-    key = "".join(secrets.choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ") for _ in range(5))
-    db_order = models.Order(
-        title=order.title, author=order.author, key=key,
-    )
-    db.add(db_order)
-    db.commit()
-    db.refresh(db_order)
-    return db_order
+@shop_app.post("/order")  # add response_model for response
+def create_order(order: schemas.Orders, db: Session = Depends(get_db)):
+    if book:=crud.get_book_by_author_title(db=db, author=order.author, title=order.title,):
+        if book.stock < order.quantity:
+            return "not enough books!"
+        #add order details to order table
+        key = random_key(5)
+        db_order = models.Order(
+            title=order.title,
+            author=order.author,
+            key=key,
+            quantity=order.quantity,
+            # complete=False,
+        )
+        db.add(db_order)
+        db.commit()
+
+        # to update stock levels in stock table
+        db_book = (db.query(models.Stock)
+                   .filter(models.Stock.author==order.author, models.Stock.title==order.title)
+                   .first())
+        setattr(db_book, 'stock', book.stock - order.quantity)
+        db.commit()  # should i change db to session?
+        # db.refresh(db_book)  # what does db.refresh do?
+
+        db.refresh(db_order)
+
+        return db_order
+    else:
+        return "book doesn't exist idiot"
 
 
 # endpoint to view current stock
