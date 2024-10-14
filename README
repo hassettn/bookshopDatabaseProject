@@ -10,7 +10,7 @@ python-dotenv==0.19.2
 (validators==0.18.2)
 
 
-Future features:
+Future features and improvements:
 x Add endpoint to view orders and stock
 x Before placing an order check that the book exists in the stock table
 1 - Add stock update endpoint (title and author to be verified against stock table, only stock number updated)
@@ -24,3 +24,5 @@ x Before placing an order check that the stock is greater than the order quantit
 x Avoid duplicate book listings
 8 - Add timestamps to orders
 9 - Add unit testing
+10 - Add functionality to delete stock
+11 - Update and complete, or remove, in_stock column
