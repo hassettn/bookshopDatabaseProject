@@ -109,3 +109,17 @@ def get_orders(db: Session = Depends(get_db), ):
     # needs the .all() tag to work!
     return db.query(models.Order).all()
 
+
+@shop_app.post("/book/restock")
+def restock_book(title, author, quantity:int, db: Session = Depends(get_db), ):
+    #add a number of stock to a book listing which already exists
+    db_book= crud.get_book_by_author_title(db=db, author=author, title=title, )
+    if db_book:
+        #then update the stock
+        db_book.stock = int(db_book.stock) + quantity
+        db_book.in_stock=bool(db_book.stock)
+        db.commit()
+        db.refresh(db_book)
+        return db_book
+    else:
+        return "book does not yet exist,please add using /book endpoint"
